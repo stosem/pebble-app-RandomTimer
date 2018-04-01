@@ -40,6 +40,7 @@ static char min_buff[64];
 static char max_buff[64];
 static char repeat_buff[64];
 static char vib_buff[64];
+static char glance_buff[64];
 static char label_buff[128];
 bool is_menu_changed = false;
 
@@ -215,6 +216,29 @@ void window_set_time_callback_set_min ( uint16_t value ) {
 void window_set_time_callback_set_max ( uint16_t value ) {
     // save value from called window to timer
     mytimer_set_max( mt, value );
+};
+
+
+// app glance callback
+static void update_app_glance(AppGlanceReloadSession *session, size_t limit, void *context) {
+  LOG("Update app_glance");
+  if (limit < 1) return;
+    time_t t = time_start_of_today();
+    struct tm* t_tm = gmtime(&t);
+    t_tm->tm_mday++;
+    time_t expiration_time = mktime(t_tm);
+    snprintf( glance_buff, sizeof( glance_buff ), "%s", mytimer_is_running( mt )?"Running":"Stopped" );
+    const AppGlanceSlice entry = (AppGlanceSlice) {
+      .layout = {
+        .icon = PUBLISHED_ID_menu_icon,
+        .subtitle_template_string = glance_buff
+      },
+      .expiration_time = expiration_time
+    };
+    const AppGlanceResult result = app_glance_add_slice(session, entry);
+    if (result != APP_GLANCE_RESULT_SUCCESS) {
+      LOG("AppGlance Error: %d", result);
+    }
 };
 
 
@@ -421,6 +445,8 @@ static void deinit( void ) {
             (int)(wakeup_time-time(NULL)) );
   };
   mt_save_persist() ;
+  // update glance
+  app_glance_reload( update_app_glance, NULL );
 };
 
 

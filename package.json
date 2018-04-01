@@ -21,6 +21,13 @@
         "displayName": "RandomTimer",
         "projectType": "native",
         "resources": {
+            "publishedMedia": [
+                {
+                    "name" : "menu_icon",
+                    "id": 1,
+                    "glance": "menu_icon"
+                }
+            ],
             "media": [
             {
             "type": "bitmap",
