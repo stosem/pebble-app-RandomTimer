@@ -162,6 +162,12 @@ bool mytimer_get_repeat( MTimer *my_timer ) {
 };
 
 
+// get remaining time
+time_t mytimer_get_remaining_time( MTimer *my_timer ) {
+  return my_timer->remaining_time ; 
+};
+
+
 // set repeat flag
 void mytimer_set_repeat( MTimer *my_timer, bool value ) { 
     ASSERT ( my_timer );

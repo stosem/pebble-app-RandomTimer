@@ -29,5 +29,6 @@ void mytimer_set_min ( MTimer*, uint16_t value );
 void mytimer_set_max ( MTimer*, uint16_t value );
 uint16_t mytimer_get_min ( MTimer* );
 uint16_t mytimer_get_max ( MTimer* );
+time_t mytimer_get_remaining_time( MTimer* ) ;
 bool mytimer_get_repeat ( MTimer* );
 void mytimer_set_repeat ( MTimer*, bool value );

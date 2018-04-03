@@ -170,7 +170,7 @@ static void window_rnd_animation( void ) {
 
 // callback from hw timer
 void app_timer_callback_proc( struct tm *tick_time, TimeUnits units_changed ) {
-    LOG(" app timer tick. remaining=%d", mt->remaining_time );
+    LOG(" app timer tick. remaining=%d", mytimer_get_remaining_time( mt ));
     // tick soft timer
     mytimer_tick( mt );
     if ( mytimer_is_running( mt ) ) {
@@ -226,7 +226,7 @@ static void update_app_glance(AppGlanceReloadSession *session, size_t limit, voi
     time_t t = time_start_of_today();
     struct tm* t_tm = gmtime(&t);
     t_tm->tm_mday++;
-    time_t expiration_time = mktime(t_tm);
+    time_t expiration_time =  time(NULL) + mytimer_get_remaining_time( mt ); 
     snprintf( glance_buff, sizeof( glance_buff ), "%s", mytimer_is_running( mt )?"Running":"Stopped" );
     const AppGlanceSlice entry = (AppGlanceSlice) {
       .layout = {
@@ -439,7 +439,7 @@ static void deinit( void ) {
   if ( mytimer_is_running( mt ) ) {
     mytimer_pause( mt, time(NULL) );
     // schedule system wakeup
-    time_t wakeup_time = time(NULL) + mt->remaining_time ;
+    time_t wakeup_time = time(NULL) + mytimer_get_remaining_time( mt );
     int32_t wid = wakeup_schedule(wakeup_time, 0, false);
     LOG("ID=%d Now %d. Subscribe to wakeup in %d (after %d sec)", (int) wid, (int)time(NULL), (int)wakeup_time, 
             (int)(wakeup_time-time(NULL)) );
